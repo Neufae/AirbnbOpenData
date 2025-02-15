@@ -1,0 +1,14 @@
+﻿@page "/launch"
+
+<PageTitle>Launch Pad</PageTitle>
+
+<button class="btn btn-primary" @onclick="LaunchSomething">Launch</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void LaunchSomething()
+    {
+        currentCount++;
+    }
+}
