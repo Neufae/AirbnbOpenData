@@ -6,9 +6,15 @@ namespace AirbnbOpenData.Services
 {
     public class TestService
     {
-        public void Run()
+        private readonly HttpClient _httpClient;
+        public TestService(HttpClient httpClient)
         {
-            using var reader = new StreamReader("data/Airbnb_Open_Data.csv");
+            _httpClient = httpClient;
+        }
+        public async Task RunAsync()
+        {
+            var csvData = await _httpClient.GetStringAsync("data/Airbnb_Open_Data.csv");
+            using var reader = new StringReader(csvData);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
             var records = csv.GetRecords<RawRoomData>().ToList();
