@@ -13,13 +13,21 @@ namespace AirbnbOpenData.Services
         }
         public async Task RunAsync()
         {
-            var csvData = await _httpClient.GetStringAsync("data/Airbnb_Open_Data.csv");
-            using var reader = new StringReader(csvData);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            try
+            {
+                var csvStream = await _httpClient.GetStreamAsync("data/Airbnb_Open_Data.csv");
+                using var reader = new StreamReader(csvStream);
+                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            var records = csv.GetRecords<RawRoomData>().ToList();
+                var records = csv.GetRecords<RawRoomData>().ToList();
+                var top10 = records.Take(10).ToList();
 
-            int breakpoint = 1;
+                int breakpoint = 1;
+            }
+            catch (Exception ex)
+            {
+                int otherBreakpoint = 1;
+            }
         }
     }
 }
