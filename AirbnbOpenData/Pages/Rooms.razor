@@ -23,7 +23,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var room in rooms.Skip(skip).Take(take))
+            @foreach (var room in rooms)
             {
                 <tr>
                     <td>@room.name</td>
@@ -34,10 +34,10 @@ else
             }
         </tbody>
     </table>
-    <div>@(pageNum)/@(rooms.Count / take)</div>
+    <div>@(pageNum)/@(roomCount / take)</div>
     <div>
-        <button class="btn btn-primary" @onclick="Prev" disabled="@prevDisabled">Prev</button>
-        <button class="btn btn-primary" @onclick="Next">Next</button>
+        <button class="btn btn-primary" @onclick="async () => await Prev()" disabled="@prevDisabled">Prev</button>
+        <button class="btn btn-primary" @onclick="async () => await Next()">Next</button>
     </div>
 }
 
@@ -47,24 +47,43 @@ else
     int take = 20;
     int pageNum = 1;
     bool prevDisabled = true;
+    Queue<string?> pageTokens = [];
+    int roomCount = 0;
 
-    private void Prev()
+    private async Task Prev()
     {
+        rooms = [];
         skip -= take;
         pageNum--;
         if (skip == 0)
             prevDisabled = true;
+
+        var result = await _backend.GetPageAsync(pageTokens.Dequeue(), take);
+        rooms = result.Data;
+
+        StateHasChanged();
     }
 
-    private void Next()
+    private async Task Next()
     {
+        rooms = [];
         skip += take;
         pageNum++;
         prevDisabled = false;
+
+        var result = await _backend.GetPageAsync(pageTokens.Peek(), take);
+        rooms = result.Data;
+        pageTokens.Enqueue(result.NextToken);
+
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        rooms = await _backend.GetAllAsync();
+        roomCount = await _backend.GetCountAsync();
+
+        var result = await _backend.GetPageAsync(null, take);
+        rooms = result.Data;
+        pageTokens.Enqueue(result.NextToken);
     }
 }

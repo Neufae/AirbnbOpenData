@@ -19,6 +19,25 @@ namespace AirbnbOpenData.Services
             return results;
         }
 
+        public async Task<int> GetCountAsync()
+        {
+            var response = await _httpClient.GetAsync("/GetRoomDataCount");
+            response.EnsureSuccessStatusCode();
+            var results = await response.Content.ReadFromJsonAsync<int>();
+            return results;
+        }
+
+        public async Task<RoomDataPage> GetPageAsync(string? nextToken = null, int pageSize = 20)
+        {
+            var path = $"/GetRoomDataPage?pageSize={pageSize}";
+            if (nextToken != null)
+                path += $"&nextToken={nextToken}";
+            var response = await _httpClient.GetAsync(path);
+            response.EnsureSuccessStatusCode();
+            var results = await response.Content.ReadFromJsonAsync<RoomDataPage>();
+            return results;
+        }
+
         public async Task RunTestAsync()
         {
             Console.WriteLine("It's running!");

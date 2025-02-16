@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DocumentModel;
 using Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,25 @@ app.MapGet("/GetAllRoomData", async (RoomDataService service) =>
     {
         var data = await service.GetAllRoomDataAsync();
         return Results.Json(data);
+    }
+);
+
+app.MapGet("/GetRoomDataPage", async (RoomDataService service, string? nextToken, int pageSize = 20) =>
+    {
+        var result = await service.GetRoomDataPaginatedAsync(nextToken, pageSize);
+        //return Results.Json(data);
+        return Results.Ok(new
+        {
+            Data = result.Data,
+            NextToken = result.NextToken
+        });
+    }
+);
+
+app.MapGet("/GetRoomDataCount", async (RoomDataService service) =>
+    {
+        var result = await service.GetItemCountWithParallelScanAsync(1000);
+        return Results.Json(result);
     }
 );
 
