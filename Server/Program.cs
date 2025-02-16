@@ -17,7 +17,7 @@ builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddHttpContextAccessor();
 
 // project services
-//builder.Services.AddScoped<DebugService>();
+builder.Services.AddScoped<DebugService>();
 builder.Services.AddScoped<RoomDataService>();
 
 var app = builder.Build();
@@ -30,12 +30,12 @@ app.UseCors(options =>
     .AllowCredentials()
 );
 
-//app.MapGet("/PopulateData", async (DebugService service) =>
-//    {
-//        await service.PopulateDataAsync();
-//        return Results.Ok();
-//    }
-//);
+app.MapGet("/PopulateData", async (DebugService service) =>
+    {
+        await service.PopulateDataAsync();
+        return Results.Ok();
+    }
+);
 
 app.MapGet("/GetAllRoomData", async (RoomDataService service) =>
     {

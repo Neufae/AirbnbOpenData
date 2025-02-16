@@ -23,7 +23,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var room in rooms)
+            @foreach (var room in rooms.Skip(skip).Take(take))
             {
                 <tr>
                     <td>@room.name</td>
@@ -34,10 +34,34 @@ else
             }
         </tbody>
     </table>
+    <div>@(pageNum)/@(rooms.Count / take)</div>
+    <div>
+        <button class="btn btn-primary" @onclick="Prev" disabled="@prevDisabled">Prev</button>
+        <button class="btn btn-primary" @onclick="Next">Next</button>
+    </div>
 }
 
 @code {
-    private List<RoomData> rooms;
+    private List<RoomData>? rooms = null;
+    int skip = 0;
+    int take = 20;
+    int pageNum = 1;
+    bool prevDisabled = true;
+
+    private void Prev()
+    {
+        skip -= take;
+        pageNum--;
+        if (skip == 0)
+            prevDisabled = true;
+    }
+
+    private void Next()
+    {
+        skip += take;
+        pageNum++;
+        prevDisabled = false;
+    }
 
     protected override async Task OnInitializedAsync()
     {
