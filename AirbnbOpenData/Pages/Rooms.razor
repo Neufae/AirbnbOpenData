@@ -58,11 +58,11 @@ else
         if (skip == 0)
             prevDisabled = true;
 
-        pageTokens.Pop();
-        pageTokens.Pop();
-        var result = await _backend.GetPageAsync(pageTokens.Peek(), take);
+        pageTokens.Pop(); // remove next page token
+        pageTokens.Pop(); // remove current page token
+        var result = await _backend.GetPageAsync(pageTokens.Peek(), take); // get using prev page token
         rooms = result.Data;
-        pageTokens.Push(result.NextToken);
+        pageTokens.Push(result.NextToken); // re-adds current page token again
 
         StateHasChanged();
     }
