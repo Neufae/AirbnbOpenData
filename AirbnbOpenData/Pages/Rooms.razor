@@ -47,7 +47,7 @@ else
     int take = 20;
     int pageNum = 1;
     bool prevDisabled = true;
-    Queue<string?> pageTokens = [];
+    Stack<string?> pageTokens = [];
     int roomCount = 0;
 
     private async Task Prev()
@@ -58,8 +58,11 @@ else
         if (skip == 0)
             prevDisabled = true;
 
-        var result = await _backend.GetPageAsync(pageTokens.Dequeue(), take);
+        pageTokens.Pop();
+        pageTokens.Pop();
+        var result = await _backend.GetPageAsync(pageTokens.Peek(), take);
         rooms = result.Data;
+        pageTokens.Push(result.NextToken);
 
         StateHasChanged();
     }
@@ -73,17 +76,19 @@ else
 
         var result = await _backend.GetPageAsync(pageTokens.Peek(), take);
         rooms = result.Data;
-        pageTokens.Enqueue(result.NextToken);
+        pageTokens.Push(result.NextToken);
 
         StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
+        pageTokens.Clear();
+        pageTokens.Push(null);
         roomCount = await _backend.GetCountAsync();
 
         var result = await _backend.GetPageAsync(null, take);
         rooms = result.Data;
-        pageTokens.Enqueue(result.NextToken);
+        pageTokens.Push(result.NextToken);
     }
 }
