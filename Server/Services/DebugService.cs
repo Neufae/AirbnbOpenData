@@ -1,22 +1,26 @@
-﻿using AirbnbOpenData.Models;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using CsvHelper;
+using Server.Models;
 using System.Globalization;
+using System.Reflection;
 
-namespace AirbnbOpenData.Services
+namespace Server.Services
 {
-    public class TestService
+    public class DebugService
     {
-        private readonly HttpClient _httpClient;
-        public TestService(HttpClient httpClient)
+        private readonly DynamoDBContext _context;
+        public DebugService()
         {
-            _httpClient = httpClient;
+            _context = new DynamoDBContext(new AmazonDynamoDBClient());
         }
-        public async Task RunAsync()
+        public async Task PopulateDataAsync()
         {
             try
             {
-                var csvStream = await _httpClient.GetStreamAsync("data/Airbnb_Open_Data.csv");
-                using var reader = new StreamReader(csvStream);
+                using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Server.Airbnb_Open_Data.csv")
+                    ?? throw new NullReferenceException($"failed to load resource stream");
+                using var reader = new StreamReader(stream);
                 using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
                 var records = csv.GetRecords<RawRoomData>().Select(x =>
@@ -52,20 +56,17 @@ namespace AirbnbOpenData.Services
                     }
                 )
                  .ToList();
-                var top10Parsed = records.Take(10).ToList();
+                //var top10Parsed = records.Take(10).ToList();
 
-                // INSERT CODE HERE TO UPLOAD TO AWS
-                // RoomData already knows to point to which dynamoDb by name: [DynamoDBTable("airbnb-open-data")]
-                // I might have to create the table first with Id and dataType
-                // You also need local credentials which are activated with an AWS command line
-                // I might need to add Drew to my AWS account so he can get permissions
-                // Program.cs has commented code for additional appsettings, but it's just Region setup as 'us-east-2' (but a good example of how to not publicly release your settings)
+                var batchWrite = _context.CreateBatchWrite<RoomData>();
+                batchWrite.AddPutItems(records);
+                await batchWrite.ExecuteAsync();
 
                 int breakpoint = 1;
             }
             catch (Exception ex)
             {
-                int otherBreakpoint = 1;
+                throw;
             }
         }
     }

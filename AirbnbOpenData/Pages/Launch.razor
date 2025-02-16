@@ -1,13 +1,13 @@
 ﻿@page "/launch"
-@inject TestService _test
+@inject BackendService _backend
 
 <PageTitle>Launch Pad</PageTitle>
 
-<button class="btn btn-primary" @onclick="LaunchSomething">Launch</button>
+<button class="btn btn-primary" @onclick="async () => await LaunchSomething()">Launch</button>
 
 @code {
     private async Task LaunchSomething()
     {
-        await _test.RunAsync();
+        await _backend.RunTestAsync();
     }
 }

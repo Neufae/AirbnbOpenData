@@ -1,38 +1,35 @@
-﻿using Amazon.DynamoDBv2.DataModel;
-
-namespace AirbnbOpenData.Models
+﻿namespace AirbnbOpenData.Models
 {
-    [DynamoDBTable("airbnb-open-data")]
     public class RoomData
     {
-        [DynamoDBHashKey] public long id { get; set; }
-        [DynamoDBRangeKey] public string dataType { get; set; }
+        public long id { get; set; }
+        public string dataType { get; set; }
 
-        [DynamoDBProperty] public string name { get; set; }
-        [DynamoDBProperty] public long hostId { get; set; }
-        [DynamoDBProperty] public string hostIdentityVerified { get; set; }
-        [DynamoDBProperty] public string hostName { get; set; }
-        [DynamoDBProperty] public string neighbourhoodGroup { get; set; }
-        [DynamoDBProperty] public string neighbourhood { get; set; }
-        [DynamoDBProperty] public double lat { get; set; }
-        [DynamoDBProperty] public double @long { get; set; }
-        [DynamoDBProperty] public string country { get; set; }
-        [DynamoDBProperty] public string countryCode { get; set; }
-        [DynamoDBProperty] public bool? instantBookable { get; set; }
-        [DynamoDBProperty] public string cancellationPolicy { get; set; }
-        [DynamoDBProperty] public string roomType { get; set; }
-        [DynamoDBProperty] public int? constructionYear { get; set; }
-        [DynamoDBProperty] public double price { get; set; }
-        [DynamoDBProperty] public double serviceFee { get; set; }
-        [DynamoDBProperty] public int minNights { get; set; }
-        [DynamoDBProperty] public int reviewCount { get; set; }
-        [DynamoDBProperty] public DateTime? lastReviewDate { get; set; }
-        [DynamoDBProperty] public double reviewsPerMonth { get; set; }
-        [DynamoDBProperty] public int reviewRating { get; set; }
-        [DynamoDBProperty] public int hostListingCount { get; set; }
-        [DynamoDBProperty] public int daysPerYearAvailable { get; set; }
-        [DynamoDBProperty] public string roomRulesDescription { get; set; }
-        [DynamoDBProperty] public string license { get; set; }
+        public string name { get; set; }
+        public long hostId { get; set; }
+        public string hostIdentityVerified { get; set; }
+        public string hostName { get; set; }
+        public string neighbourhoodGroup { get; set; }
+        public string neighbourhood { get; set; }
+        public double lat { get; set; }
+        public double @long { get; set; }
+        public string country { get; set; }
+        public string countryCode { get; set; }
+        public bool? instantBookable { get; set; }
+        public string cancellationPolicy { get; set; }
+        public string roomType { get; set; }
+        public int? constructionYear { get; set; }
+        public double price { get; set; }
+        public double serviceFee { get; set; }
+        public int minNights { get; set; }
+        public int reviewCount { get; set; }
+        public DateTime? lastReviewDate { get; set; }
+        public double reviewsPerMonth { get; set; }
+        public int reviewRating { get; set; }
+        public int hostListingCount { get; set; }
+        public int daysPerYearAvailable { get; set; }
+        public string roomRulesDescription { get; set; }
+        public string license { get; set; }
 
     }
 }

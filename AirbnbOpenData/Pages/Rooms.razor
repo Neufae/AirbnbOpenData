@@ -1,0 +1,46 @@
+﻿@page "/data"
+@inject BackendService _backend
+
+<PageTitle>Room Data</PageTitle>
+
+<h1>Room Data</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (rooms == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Host</th>
+                <th>Price</th>
+                <th>Service Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in rooms)
+            {
+                <tr>
+                    <td>@room.name</td>
+                    <td>@room.hostName</td>
+                    <td>$@room.price</td>
+                    <td>$@room.serviceFee</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RoomData> rooms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        rooms = await _backend.GetAllAsync();
+    }
+}
